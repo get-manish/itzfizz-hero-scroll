@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-fizz: #ffc400;
+  --color-cream: #fffdf8;
+  --color-butter: #fff3c4;
+  --color-ink: #111111;
+  --font-sans: Manrope, system-ui, sans-serif;
+}
 
 /* Manrope is requested with display=swap. This metric-matched fallback keeps the
    line boxes of the pinned hero stable while the webfont is still in flight, so

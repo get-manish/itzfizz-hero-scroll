@@ -18,7 +18,7 @@ export default function HeroStats() {
     <dl className="mt-4 grid grid-cols-3 gap-3 md:mt-6 md:gap-6">
       {stats.map((s) => (
         <div {...fx('stat')} key={s.label} className="flex min-w-0 flex-col-reverse gap-1 md:gap-1.5">
-          <dt className="text-[9px] leading-[1.25] text-[#5A5A5A] md:text-[11px]">{s.label}</dt>
+          <dt className="text-[9px] leading-tight text-[#5A5A5A] md:text-[11px]">{s.label}</dt>
           <dd className="stat-value font-extrabold leading-none">
             <span
               {...fx('count')}
@@ -31,7 +31,7 @@ export default function HeroStats() {
             </span>
             <span className="sr-only">{`${s.target}${s.suffix}`}</span>
           </dd>
-          <span {...fx('rule')} aria-hidden="true" className="block h-[3px] w-full origin-left bg-ink" />
+          <span {...fx('rule')} aria-hidden="true" className="block h-0.75 w-full origin-left bg-ink" />
         </div>
       ))}
     </dl>

@@ -33,7 +33,7 @@ export default function StageTabs() {
               {...fx('tab')}
               data-index={i}
               aria-label={`Stage ${stage.number}: ${stage.label}`}
-              className="relative flex min-h-[44px] w-full flex-col items-center justify-center px-1 text-[10px] font-bold uppercase tracking-[0.12em] md:text-[11px]"
+              className="relative flex min-h-11 w-full flex-col items-center justify-center px-1 text-[10px] font-bold uppercase tracking-[0.12em] md:text-[11px]"
             >
               <span
                 {...fx('tabmark')}

@@ -9,7 +9,7 @@ function Point({ point }: { readonly point: BulletPoint }) {
       <span
         {...fx('pointmark')}
         aria-hidden="true"
-        className="mt-[7px] h-2.5 w-2.5 shrink-0 border-2 border-ink bg-fizz"
+        className="mt-1.75 h-2.5 w-2.5 shrink-0 border-2 border-ink bg-fizz"
       />
       <span className="min-w-0">
         <span className="block text-sm font-bold md:text-base">{point.title}</span>

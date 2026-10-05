@@ -27,7 +27,7 @@ export default function Hero() {
   return (
     <section ref={ref} className="hero relative isolate w-full bg-cream">
       <HeroBackground />
-      <div className="hero-shell relative z-10 mx-auto w-full max-w-[86rem] px-5 md:px-8">
+      <div className="hero-shell relative z-10 mx-auto w-full max-w-344 px-5 md:px-8">
         <HeroNav />
         <div className="hero-grid">
           <StageContent />

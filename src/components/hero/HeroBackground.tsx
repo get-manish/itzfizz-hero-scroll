@@ -8,11 +8,11 @@ export default function HeroBackground() {
         <div
           {...fx('ptr')}
           data-depth="16"
-          className="absolute -right-[22%] top-[2%] aspect-square w-[86vmin] rounded-full bg-butter/80"
+          className="absolute right-[-22%] top-[2%] aspect-square w-[86vmin] rounded-full bg-butter/80"
         />
       </div>
-      <div {...fx('dots')} className="wc dots absolute inset-0 z-[1] overflow-clip" aria-hidden="true">
-        <div {...fx('ptr')} data-depth="26" className="absolute -inset-[15%]" />
+      <div {...fx('dots')} className="wc dots absolute inset-0 z-1 overflow-clip" aria-hidden="true">
+        <div {...fx('ptr')} data-depth="26" className="absolute inset-[-15%]" />
       </div>
     </>
   )
