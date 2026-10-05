@@ -1,0 +1,380 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Manrope is requested with display=swap. This metric-matched fallback keeps the
+   line boxes of the pinned hero stable while the webfont is still in flight, so
+   ScrollTrigger never measures a half-swapped layout. */
+@font-face {
+  font-family: 'Manrope Fallback';
+  src: local('Helvetica Neue'), local('Liberation Sans'), local('Arial');
+  size-adjust: 101%;
+  ascent-override: 94%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* `clip` instead of `hidden`: it prevents horizontal overflow without turning the
+   body into a scroll container, which would break ScrollTrigger's pin. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  background: #fffdf8;
+  color: #111;
+  font-family: 'Manrope', 'Manrope Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* ---- pinned hero shell ------------------------------------------------ */
+  .hero {
+    /* clips the decorative layers without creating a scroll container */
+    overflow: clip;
+    height: 100svh;
+  }
+
+  .hero-shell {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .hero-grid {
+    display: grid;
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    row-gap: 0.75rem;
+    padding-block: 0.25rem 0.5rem;
+  }
+
+  .hero-copy {
+    min-width: 0;
+  }
+
+  /* The square that owns every piece of hero artwork. Its box is the hard
+     boundary that the scroll timeline clamps motion against. */
+  .hero-visual {
+    position: relative;
+    width: min(92%, 36svh);
+    aspect-ratio: 1 / 1;
+    justify-self: center;
+  }
+
+  .h1 {
+    font-size: clamp(1.7rem, min(7.6vw, 11svh), 6.5rem);
+    letter-spacing: 0.12em;
+    line-height: 1.02;
+  }
+
+  .stat-value {
+    font-size: clamp(1.35rem, min(3.4vw, 5.2svh), 3.25rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ten-value {
+    font-size: clamp(1.7rem, min(6.4vw, 9svh), 4.25rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    /* No `transform` here on purpose: GSAP is the only owner of transforms on
+       animated elements (the magnetic CTA moves the button itself). */
+    transition: box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+
+  .btn:hover {
+    box-shadow: 0 8px 0 #ffc40066;
+  }
+
+  .btn-ink {
+    background: #111;
+    color: #fffdf8;
+  }
+
+  .btn-ink:hover {
+    box-shadow: 0 8px 0 #ffc400;
+  }
+
+  .mark-y {
+    display: inline-block;
+    background: linear-gradient(transparent 56%, #ffc400 56%);
+  }
+
+  /* ---- letter-by-letter headline (custom splitter, no SplitText) -------- */
+  .char {
+    display: inline-block;
+    overflow: clip;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+    vertical-align: top;
+  }
+
+  .char-in {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* ---- background layers ------------------------------------------------ */
+  .dots {
+    background-image: radial-gradient(circle, rgb(17 17 17 / 16%) 1.5px, transparent 1.6px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(120% 95% at 72% 18%, #000 30%, transparent 76%);
+    mask-image: radial-gradient(120% 95% at 72% 18%, #000 30%, transparent 76%);
+  }
+
+  .pill {
+    box-shadow: 3px 3px 0 #111;
+  }
+
+  /* The blob's hard shadow is a filter on the NON-spinning outer core: it
+     follows the blob's shape but never rotates with the inner spin wrapper. */
+  .core {
+    filter: drop-shadow(8px 8px 0 #111);
+  }
+
+  .btn-fizz {
+    background: #ffc400;
+    color: #111;
+    border: 2px solid #111;
+    box-shadow: 4px 4px 0 #111;
+  }
+
+  /* ---- stage content: every layer shares one grid cell ------------------ */
+  .stage-stack {
+    display: grid;
+  }
+
+  .stage-layer {
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+
+  /* Outlined stage number: a one-line window over a five-line track. */
+  .stage-num {
+    height: 1em;
+    overflow: hidden;
+    font-size: clamp(2.4rem, min(9vw, 11svh), 5.5rem);
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .outline-num {
+    color: transparent;
+    -webkit-text-stroke: 2px #111;
+  }
+
+  .nav-line {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .nav-link:hover .nav-line,
+  .nav-link:focus-visible .nav-line {
+    transform: scaleX(1);
+  }
+
+  /* Only the handful of layers that actually move get promoted. */
+  .wc {
+    will-change: transform;
+  }
+}
+
+/* Compact layout: at most two bullets per stage, no per-bullet detail line. */
+@media (max-width: 767px) {
+  .stage-points > li:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    align-items: center;
+    align-content: stretch;
+    column-gap: clamp(1rem, 3vw, 3rem);
+    row-gap: 0;
+  }
+
+  .hero-visual {
+    width: min(100%, 58svh);
+    justify-self: end;
+  }
+}
+
+@media (min-width: 1200px) {
+  .h1 {
+    letter-spacing: 0.1em;
+  }
+
+  .hero-visual {
+    width: min(100%, 60svh);
+  }
+}
+
+/* Short viewports (landscape phones, split-screen windows): the stacked layout
+   cannot fit one screen, so the vertical rhythm tightens and the type scale
+   follows the *height*. Nothing is clipped and nothing overlaps the header. */
+@media (max-height: 560px) {
+  .hero-shell {
+    padding-block: 0.25rem;
+  }
+
+  .hero-grid {
+    row-gap: 0.35rem;
+    padding-block: 0;
+  }
+
+  .h1 {
+    font-size: clamp(1.3rem, min(6.2vw, 9svh), 3rem);
+  }
+
+  .stat-value {
+    font-size: clamp(1.05rem, min(2.9vw, 4.2svh), 2rem);
+  }
+
+  .ten-value {
+    font-size: clamp(1.25rem, min(4.8vw, 6.6svh), 2.5rem);
+  }
+}
+
+/* Short *and* wide enough for two columns: put the artwork beside the copy
+   instead of under it, which is what keeps the hero inside 100svh. */
+@media (max-height: 560px) and (min-width: 480px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+    align-items: center;
+    align-content: stretch;
+    column-gap: clamp(0.75rem, 2.4vw, 2rem);
+    row-gap: 0;
+  }
+
+  .hero-visual {
+    width: min(100%, 56svh);
+    justify-self: end;
+  }
+}
+
+/* Ultra-short and narrow: the stacked layout needs the artwork reduced to a
+   mark before anything collides with the header or the bottom bar. */
+@media (max-height: 520px) and (max-width: 479px) {
+  .hero-visual {
+    width: min(88%, 32svh);
+  }
+}
+
+/* Short narrow phones (320x568, 360x640): the stacked column is copy on top,
+   artwork below, so the artwork gives up some height. */
+@media (max-width: 479px) and (min-height: 431px) and (max-height: 650px) {
+  .hero-visual {
+    width: min(80%, 27svh);
+  }
+}
+
+@media (max-height: 430px) and (max-width: 479px) {
+  .hero-visual {
+    width: min(78%, 24svh);
+  }
+}
+
+/* Landscape phones keep the headline and the stats; the eyebrow badge is the
+   first thing that can go when the column is this short. */
+@media (max-height: 430px) {
+  [data-fx="eyebrow"] {
+    display: none;
+  }
+}
+
+/* Short *and* tall enough to be two columns, but too short for a large
+   square: cap the artwork so the column fits the available height. */
+@media (max-height: 400px) and (min-width: 480px) {
+  .hero-visual {
+    width: min(100%, 46svh);
+  }
+}
+
+/* A phone held sideways has ~200px of usable column height. The supporting
+   paragraph is the only thing that can go without losing the headline, the
+   stats or the artwork, so it is dropped rather than letting the layout
+   overflow into the header and the bottom bar. */
+@media (max-height: 520px) and (max-width: 900px) {
+  [data-fx="copy"] {
+    display: none;
+  }
+}
+
+/* Reduced motion: no pin, no scrub. The five stages are ordinary stacked
+   content; the tab bar and number window (which only mean something while
+   scrolling) are hidden, and the page simply scrolls. */
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .hero-shell {
+    height: auto;
+  }
+
+  .hero {
+    min-height: 100svh;
+  }
+
+  .hero-grid {
+    align-items: start;
+    row-gap: 2rem;
+    padding-block: 1rem 2rem;
+  }
+
+  .stage-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .stage-points > li:nth-child(n + 3) {
+    display: flex;
+  }
+
+  .stage-tabs,
+  .stage-num {
+    display: none;
+  }
+
+  .nav-line {
+    transition: none;
+  }
+
+  .char-in,
+  .wc {
+    will-change: auto;
+  }
+
+  [data-fx="copy"] {
+    display: block !important;
+  }
+}
