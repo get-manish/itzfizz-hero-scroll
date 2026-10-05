@@ -1,4 +1,3 @@
-import type { gsap } from './gsapSetup'
 import { all, one } from './hooks'
 import { safeDelta, safeScale } from './measure'
 import { UNITS, type Motion } from './motion'
